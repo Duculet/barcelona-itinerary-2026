@@ -2,7 +2,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Barcelona Itinerary · 14–16 October 2026</title>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">
   <style>
     :root { --ink:#17364c; --blue:#17639b; }
     * { box-sizing:border-box; }
@@ -55,7 +55,7 @@
 <div class="legend">Dashed routes show visit order only, not street navigation. Day itineraries are collapsed by default.</div>
 <main class="wrap" id="lists"></main>
 
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js"></script>
 <script>
 const D = {
   wed: {
@@ -74,7 +74,7 @@ const D = {
       ['20:00–22:00','Dinner + return','Return to Rda. de Sant Pau 1.','all','normal']
     ],
     pts: [
-      ['Home',41.3788,2.1638,'all'],['Plaça Catalunya',41.387,2.17,'all'],['Moco (3 couples)',41.3845,2.1814,'moco'],['Sagrada (1 interior / all exterior)',41.4036,2.1744,'sagrada'],['Macaya',41.4004,2.169,'all'],['Punxes',41.3981,2.163,'all'],['Baró de Quadras',41.3964,2.1617,'all'],['Casa Amatller',41.3917,2.165,'amatller'],['Casa Milà',41.3954,2.1619,'mila'],['Home',41.3788,2.1638,'all']
+      ['Home',41.3788,2.1638,'all'],['Plaça Catalunya',41.387,2.17,'all'],['Moco (3 couples)',41.3845,2.1814,'moco'],['Sagrada (1 interior / all exterior)',41.4036,2.1744,'sagrada'],['Macaya',41.4019,2.1638,'all'],['Punxes',41.3985,2.1657,'all'],['Baró de Quadras',41.3897,2.1476,'all'],['Amatller',41.3916,2.1649,'amatller'],['Milà',41.3986,2.1581,'mila'],['Casa Comalat',41.384,2.1688,'all']
     ]
   },
   thu: {
@@ -94,7 +94,7 @@ const D = {
       ['22:00–22:30','Metro/walk home','Espanya → Sant Antoni.','all','normal']
     ],
     pts: [
-      ['Home',41.3788,2.1638,'all'],['Palau Música',41.3875,2.1752,'all'],['Arc',41.3909,2.1804,'all'],['Ciutadella',41.3885,2.185,'all'],['Santa Maria',41.3846,2.1817,'all'],['Aquarium (2 couples)',41.3765,2.1845,'aquarium'],['Port Vell (2 couples)',41.376,2.1805,'promenade'],['Natura',41.3767,2.1811,'all'],['Costa i Llobera',41.3693,2.169,'all'],['Palau Güell',41.3787,2.1742,'all'],['Magic Fountain',41.3712,2.1515,'all'],['Home',41.3788,2.1638,'all']
+      ['Home',41.3788,2.1638,'all'],['Palau Música',41.3875,2.1752,'all'],['Arc',41.3909,2.1804,'all'],['Ciutadella',41.3885,2.185,'all'],['Santa Maria',41.3846,2.1817,'all'],['Aquarium (2 couples)',41.3738,2.1825,'aquarium'],['Port Vell promenade (2 couples)',41.3735,2.1854,'promenade'],['Natura',41.3745,2.1889,'all'],['Palau Güell',41.3763,2.1802,'all'],['Plaça Reial',41.3758,2.1761,'all'],['Magic Fountain',41.3706,2.1507,'all']
     ]
   },
   fri: {
@@ -111,12 +111,12 @@ const D = {
       ['19:50–22:00','Dinner / Palau Güell exterior / pack','Prepare for Alicante.','all','normal']
     ],
     pts: [
-      ['Home',41.3788,2.1638,'all'],['Bunkers',41.4194,2.1616,'all'],['Park Güell',41.4145,2.1527,'all'],['Bellesguard',41.4115,2.1308,'all'],['Casa Batlló',41.3916,2.1649,'all'],['AVIS (3+)',41.3913,2.1655,'avis'],['La Rambla (other 3 couples)',41.3844,2.17,'rest'],['Boqueria',41.3817,2.1711,'rest'],['Plaça Reial',41.379,2.1742,'all'],['Home',41.3788,2.1638,'all']
+      ['Home',41.3788,2.1638,'all'],['Bunkers',41.4194,2.1616,'all'],['Park Güell',41.4145,2.1527,'all'],['Bellesguard',41.4115,2.1308,'all'],['Casa Batlló',41.3916,2.1649,'all'],['AVIS',41.393,2.1621,'avis'],['La Rambla + Boqueria',41.3815,2.1759,'rest'],['Plaça Reial',41.3758,2.1761,'all']
     ]
   }
 };
 const keys = Object.keys(D);
-const labels = {all:'ALL 8',split:'SPLIT',moco:'3 couples: MOCO',sagrada:'1 couple: SAGRADA',amatller:'1 couple: AMATLLER',mila:'2 couples: MILÀ',outside:'1 couple: OUTSIDE/SHOPPING',aquarium:'2 couples: AQUARIUM',promenade:'2 couples: PROMENADE',avis:'3+ people: AVIS',rest:'Other 3 couples',reunite:'REUNITE'};
+const labels = {all:'ALL 8',split:'SPLIT',moco:'3 couples: MOCO',sagrada:'1 couple: SAGRADA',amatller:'1 couple: AMATLLER',mila:'2 couples: MILÀ',outside:'1 couple: OUTSIDE/SHOPPING',aquarium:'2 couples: AQUARIUM',promenade:'2 couples: PROMENADE',avis:'3+ people: AVIS',rest:'rest of group',reunite:'REUNITE',highlight:'MAGIC FOUNTAIN'};
 const map = L.map('map').setView([41.39,2.16],13);
 const layers = [];
 L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'}).addTo(map);
@@ -129,7 +129,7 @@ keys.forEach((key,index) => {
   day.pts.forEach((p,n) => {
     const home = p[0] === 'Home';
     const icon = L.divIcon({className:'', html:home ? '<div class="home">⌂</div>' : '<div class="pin" style="background:' + day.color + '">' + (n + 1) + '</div>', iconSize:[32,32], iconAnchor:[16,16]});
-    L.marker([p[1],p[2]], {icon}).bindPopup('<b>' + esc(p[0]) + '</b><br><span class="tag">' + (labels[p[3]] || 'ALL 8') + '</span><br><a class="go" target="_blank" rel="noopener" href="' + directions(p) + '">Directions ↗</a>').addTo(layer);
+    L.marker([p[1],p[2]], {icon}).bindPopup('<b>' + esc(p[0]) + '</b><br><span class="tag">' + (labels[p[3]] || 'ALL 8') + '</span><br><a class="go" target="_blank" rel="noopener" href="' + directions(p) + '">Google Maps</a>').addTo(layer);
   });
   L.polyline(day.pts.map(p => [p[1],p[2]]), {color:day.color, dashArray:'6 9', weight:3}).addTo(layer);
 });
@@ -142,7 +142,7 @@ document.getElementById('lists').innerHTML = keys.map(key => {
 }).join('');
 function fit() {
   const pts = [];
-  keys.forEach((key,index) => { if (document.getElementById('c' + index).checked) D[key].pts.forEach(p => pts.push([p[1],p[2]]); });
+  keys.forEach((key,index) => { if (document.getElementById('c' + index).checked) D[key].pts.forEach(p => pts.push([p[1],p[2]])); });
   map.fitBounds(L.latLngBounds(pts).pad(.13));
 }
 fit();
