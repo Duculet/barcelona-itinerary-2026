@@ -1,0 +1,152 @@
+<html lang="en"><head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Barcelona Itinerary · 14–16 October 2026</title>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <style>
+    :root { --ink:#17364c; --blue:#17639b; }
+    * { box-sizing:border-box; }
+    body { margin:0; font:15px -apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; color:var(--ink); background:#f7fafb; }
+    header { padding:14px 15px; background:#eaf3f7; border-bottom:1px solid #d2e1e8; }
+    h1 { margin:0 0 6px; font-size:22px; }
+    .toolbar { padding:10px 12px; background:#fff; display:flex; flex-wrap:wrap; gap:12px; align-items:center; }
+    button { border:1px solid #aabcc7; border-radius:8px; background:#fff; padding:8px 10px; color:var(--ink); font-size:15px; }
+    #map { height:60vh; min-height:400px; background:#e8f0f3; }
+    .pin { width:28px; height:28px; line-height:28px; border:2px solid #fff; border-radius:50%; color:#fff; text-align:center; font:bold 13px Arial; box-shadow:0 1px 4px #333; }
+    .home { width:28px; height:28px; line-height:28px; border:2px solid #fff; border-radius:6px; color:#fff; background:#263f50; text-align:center; font:bold 16px Arial; box-shadow:0 1px 4px #333; }
+    .notice { margin:10px 12px; padding:10px; border-left:5px solid #d3a313; background:#fff5d3; }
+    .legend { margin:0 12px 10px; color:#526578; font-size:13px; }
+    .wrap { padding:0 12px 30px; }
+    details { margin:9px 0; overflow:hidden; background:#fff; border:1px solid #d8e3e9; border-radius:8px; }
+    summary { padding:12px; cursor:pointer; font-weight:bold; font-size:17px; }
+    .row { display:grid; grid-template-columns:96px 1fr; gap:9px; padding:9px; border-top:1px solid #e1e8ec; }
+    .time { font-weight:bold; color:#425a6c; }
+    .name { font-weight:bold; }
+    .detail { margin-top:4px; font-size:13px; }
+    .tag { display:inline-block; margin-top:5px; padding:2px 7px; border-radius:11px; background:#edf3f6; font-size:11px; font-weight:bold; }
+    .split { background:#f8effc; border-left:5px solid #8a45a7; }
+    .moco { background:#edf5ff; border-left:5px solid #2070bb; }
+    .sagrada { background:#fff3ea; border-left:5px solid #d36c2e; }
+    .amatller { background:#ecf8f2; border-left:5px solid #198765; }
+    .mila { background:#fff8e7; border-left:5px solid #a57400; }
+    .outside { background:#f2f3f5; border-left:5px solid #6f7178; }
+    .aquarium { background:#e9f8fb; border-left:5px solid #087f9a; }
+    .promenade { background:#eaf8f3; border-left:5px solid #288b74; }
+    .avis { background:#feedef; border-left:5px solid #ad3345; }
+    .rest { background:#eeeeff; border-left:5px solid #5555a6; }
+    .reunite { background:#e7f7ee; border-left:5px solid #168450; }
+    .highlight { background:#fff6c7; border-left:5px solid #d3a313; }
+    .go { display:inline-block; margin-top:7px; padding:7px; border-radius:5px; background:#17639b; color:#fff !important; text-decoration:none; font-weight:bold; }
+  </style>
+</head>
+<body>
+<header>
+  <h1>Barcelona · Final itinerary</h1>
+  <div>Rda. de Sant Pau 1 · walk/metro with Hola · no taxis · Magic Fountain Thursday 21:00</div>
+</header>
+<div class="toolbar">
+  <label><input checked="" id="c0" type="checkbox"> Wed</label>
+  <label><input checked="" id="c1" type="checkbox"> Thu</label>
+  <label><input checked="" id="c2" type="checkbox"> Fri</label>
+  <button id="fit">Fit map</button>
+</div>
+<div id="map"></div>
+<div class="notice">Purple = split; branch colours = simultaneous subgroups; green = reunion; yellow = Magic Fountain. Tap map pins for Google Maps directions.</div>
+<div class="legend">Dashed routes show visit order only, not street navigation. Day itineraries are collapsed by default.</div>
+<main class="wrap" id="lists"></main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+const D = {
+  wed: {
+    title: 'Wednesday 14 October', color: '#d86635',
+    rows: [
+      ['08:30–11:00','Accommodation: Rda. de Sant Pau 1','Arrival, public transport and luggage drop.','all','normal'],
+      ['11:00–12:45','Plaça de Catalunya + shopping','Shopping / orientation.','all','normal'],
+      ['12:45–13:15','SPLIT A: Moco / Sagrada','3 couples → Moco; 1 couple → Sagrada.','split','split'],
+      ['13:15–14:15','Moco — 3 couples','Ticket bought; 60 min.','moco','branch'],
+      ['14:00–15:30','Sagrada interior — 1 couple','Ticket bought; 90 min.','sagrada','branch'],
+      ['14:15–15:30','El Born free time — Moco group','Coffee/free time until reunion.','moco','branch'],
+      ['15:30–16:00','REUNITE: Sagrada exterior','All 8 meet for exterior photos.','all','reunite'],
+      ['16:00–17:15','Macaya → Punxes → Baró de Quadras','Walking route.','all','normal'],
+      ['18:00–19:00','SPLIT B: Amatller / Milà / exterior','1 couple Amatller; 2 couples Milà; 1 couple exterior/shopping.','split','split'],
+      ['19:00–20:00','REUNITE: Casa Comalat + shopping','Meet after interiors.','all','reunite'],
+      ['20:00–22:00','Dinner + return','Return to Rda. de Sant Pau 1.','all','normal']
+    ],
+    pts: [
+      ['Home',41.3788,2.1638,'all'],['Plaça Catalunya',41.387,2.17,'all'],['Moco (3 couples)',41.3845,2.1814,'moco'],['Sagrada (1 interior / all exterior)',41.4036,2.1744,'sagrada'],['Macaya',41.4004,2.169,'all'],['Punxes',41.3981,2.163,'all'],['Baró de Quadras',41.3964,2.1617,'all'],['Casa Amatller',41.3917,2.165,'amatller'],['Casa Milà',41.3954,2.1619,'mila'],['Home',41.3788,2.1638,'all']
+    ]
+  },
+  thu: {
+    title: 'Thursday 15 October', color: '#12858b',
+    rows: [
+      ['08:45–10:45','Home → Palau de la Música','Ticketed interior starts at 09:45.','all','normal'],
+      ['10:45–12:50','Arc / Ciutadella / Born / Gothic','Walking circuit.','all','normal'],
+      ['13:30–15:00','SPLIT C: Aquarium / Port Vell','2 couples Aquarium; 2 couples promenade.','split','split'],
+      ['13:30–15:00','Aquarium — 2 couples','Purchased tickets.','aquarium','branch'],
+      ['13:30–15:00','Port Vell promenade — 2 couples','Rambla de Mar, marina and waterfront.','promenade','branch'],
+      ['15:00–16:30','REUNITE: Natura + Maremagnum','Shopping / coffee.','all','reunite'],
+      ['16:30–18:20','Columbus → Costa i Llobera → Palau Güell','Public transport and walking.','all','normal'],
+      ['18:30–19:30','Palau Güell interior','Ticket bought.','all','normal'],
+      ['19:30–20:40','Plaça Reial / Rambla / dinner','Keep dinner quick.','all','normal'],
+      ['20:40–21:00','Metro/walk to Espanya','Use Hola card.','all','normal'],
+      ['21:00–22:00','Magic Fountain of Montjuïc','Free show; confirm on day.','all','highlight'],
+      ['22:00–22:30','Metro/walk home','Espanya → Sant Antoni.','all','normal']
+    ],
+    pts: [
+      ['Home',41.3788,2.1638,'all'],['Palau Música',41.3875,2.1752,'all'],['Arc',41.3909,2.1804,'all'],['Ciutadella',41.3885,2.185,'all'],['Santa Maria',41.3846,2.1817,'all'],['Aquarium (2 couples)',41.3765,2.1845,'aquarium'],['Port Vell (2 couples)',41.376,2.1805,'promenade'],['Natura',41.3767,2.1811,'all'],['Costa i Llobera',41.3693,2.169,'all'],['Palau Güell',41.3787,2.1742,'all'],['Magic Fountain',41.3712,2.1515,'all'],['Home',41.3788,2.1638,'all']
+    ]
+  },
+  fri: {
+    title: 'Friday 16 October', color: '#8055a7',
+    rows: [
+      ['08:15–11:15','Home → Bunkers → Park Güell','Metro/bus/walk; no taxis.','all','normal'],
+      ['11:30–13:00','Park Güell interior','Ticket bought.','all','normal'],
+      ['13:00–16:10','Lunch / Gràcia shopping / Bellesguard exterior','Public transport and walking.','all','normal'],
+      ['16:45–17:45','Casa Batlló interior','Ticket bought.','all','normal'],
+      ['18:20–19:15','SPLIT D: AVIS / Rambla-Boqueria','3+ people AVIS; other 3 couples walk.','split','split'],
+      ['18:20–19:15','AVIS pickup — 3+ people','Passeig de Gràcia 22, Parking Saba -1.','avis','branch'],
+      ['18:20–19:20','La Rambla + Boqueria — other 3 couples','Walk/public transport.','rest','branch'],
+      ['19:20–19:50','REUNITE: Plaça Reial','Meet AVIS group.','all','reunite'],
+      ['19:50–22:00','Dinner / Palau Güell exterior / pack','Prepare for Alicante.','all','normal']
+    ],
+    pts: [
+      ['Home',41.3788,2.1638,'all'],['Bunkers',41.4194,2.1616,'all'],['Park Güell',41.4145,2.1527,'all'],['Bellesguard',41.4115,2.1308,'all'],['Casa Batlló',41.3916,2.1649,'all'],['AVIS (3+)',41.3913,2.1655,'avis'],['La Rambla (other 3 couples)',41.3844,2.17,'rest'],['Boqueria',41.3817,2.1711,'rest'],['Plaça Reial',41.379,2.1742,'all'],['Home',41.3788,2.1638,'all']
+    ]
+  }
+};
+const keys = Object.keys(D);
+const labels = {all:'ALL 8',split:'SPLIT',moco:'3 couples: MOCO',sagrada:'1 couple: SAGRADA',amatller:'1 couple: AMATLLER',mila:'2 couples: MILÀ',outside:'1 couple: OUTSIDE/SHOPPING',aquarium:'2 couples: AQUARIUM',promenade:'2 couples: PROMENADE',avis:'3+ people: AVIS',rest:'Other 3 couples',reunite:'REUNITE'};
+const map = L.map('map').setView([41.39,2.16],13);
+const layers = [];
+L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {maxZoom:19, attribution:'© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap contributors</a>'}).addTo(map);
+function esc(x) { return String(x).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+function directions(p) { return 'https://www.google.com/maps/dir/?' + new URLSearchParams({api:'1', destination:p[1] + ',' + p[2], travelmode:'walking'}); }
+keys.forEach((key,index) => {
+  const day = D[key];
+  const layer = L.layerGroup().addTo(map);
+  layers.push(layer);
+  day.pts.forEach((p,n) => {
+    const home = p[0] === 'Home';
+    const icon = L.divIcon({className:'', html:home ? '<div class="home">⌂</div>' : '<div class="pin" style="background:' + day.color + '">' + (n + 1) + '</div>', iconSize:[32,32], iconAnchor:[16,16]});
+    L.marker([p[1],p[2]], {icon}).bindPopup('<b>' + esc(p[0]) + '</b><br><span class="tag">' + (labels[p[3]] || 'ALL 8') + '</span><br><a class="go" target="_blank" rel="noopener" href="' + directions(p) + '">Directions ↗</a>').addTo(layer);
+  });
+  L.polyline(day.pts.map(p => [p[1],p[2]]), {color:day.color, dashArray:'6 9', weight:3}).addTo(layer);
+});
+document.getElementById('lists').innerHTML = keys.map(key => {
+  const day = D[key];
+  return '<details><summary style="color:' + day.color + '">' + day.title + '</summary>' + day.rows.map(r => {
+    const klass = r[4] === 'split' ? 'split' : r[4] === 'reunite' ? 'reunite' : r[4] === 'highlight' ? 'highlight' : r[4] === 'branch' ? r[3] : '';
+    return '<div class="row ' + klass + '"><div class="time">' + r[0] + '</div><div><div class="name">' + r[1] + '</div><span class="tag">' + (labels[r[3]] || 'ALL 8') + '</span><div class="detail">' + r[2] + '</div></div></div>';
+  }).join('') + '</details>';
+}).join('');
+function fit() {
+  const pts = [];
+  keys.forEach((key,index) => { if (document.getElementById('c' + index).checked) D[key].pts.forEach(p => pts.push([p[1],p[2]]); });
+  map.fitBounds(L.latLngBounds(pts).pad(.13));
+}
+fit();
+document.getElementById('fit').onclick = fit;
+keys.forEach((key,index) => document.getElementById('c' + index).onchange = e => { e.target.checked ? layers[index].addTo(map) : map.removeLayer(layers[index]); fit(); });
+</script>
+</body></html>
